@@ -36,6 +36,7 @@ public class UserInfoController {
 
     @RequestMapping("/sendCode/{phone}")
     public Result sendCode(@PathVariable("phone") String phone){
+        System.out.println("wch第一次修改");
         // 1. 生成一个4位数字的随机验证码
         StringBuilder codeBuilder = new StringBuilder("");
         for (int i = 0; i < 4; i++) {
