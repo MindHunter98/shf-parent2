@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.AdminMapper">
+    <sql id="columns">
+        id,username,password,name,phone,head_url,description,create_time,update_time,is_deleted
+    </sql>
+
+    <!--添加账户-->
+    <insert id="insert">
+        INSERT INTO acl_admin (username,password,name,phone,head_url,description)
+        VALUES (#{username},#{password},#{name},#{phone},#{headUrl},#{description})
+    </insert>
+    <!--查找所有账户-->
+    <select id="findAll" resultType="Admin">
+        select <include refid="columns"/> from acl_admin where is_deleted=0
+    </select>
+    <!--根据ID查找账户-->
+    <select id="findById" resultType="Admin">
+        select <include refid="columns"/> from acl_admin where is_deleted=0 and id=#{id}
+    </select>
+    <!--根据分页查找所有账户-->
+    <select id="findPageList" resultType="Admin">
+        SELECT <include refid="columns"></include>
+        FROM acl_admin
+        <where>
+            <if test="username != null and username != ''">
+                username LIKE CONCAT("%",#{username},"%")
+            </if>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT("%",#{name},"%")
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE CONCAT(#{phone},"%")
+            </if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">
+                AND create_time >= #{createTimeBegin}
+            </if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">
+                AND create_time &lt;= #{createTimeEnd}
+            </if>
+            AND is_deleted = 0
+        </where>
+        ORDER BY create_time DESC
+    </select>
+    <!--修改账户-->
+    <update id="update">
+        update acl_admin
+        <set>
+            <if test="username != null and username != ''">
+                username=#{username},
+            </if>
+            <if test="password != null and password != ''">
+                password=#{password},
+            </if>
+            <if test="name != null and name != ''">
+                name=#{name},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone=#{phone},
+            </if>
+            <if test="headUrl != null and headUrl != ''">
+                head_url=#{headUrl},
+            </if>
+            <if test="description != null and description != ''">
+                description=#{description},
+            </if>
+            update_time=now()
+        </set>
+        where id=#{id}
+    </update>
+    <!--删除账户-->
+    <update id="delete">
+        update acl_admin set is_deleted=1 where id=#{id} and is_deleted=0
+    </update>
+</mapper>

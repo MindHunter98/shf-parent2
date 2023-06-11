@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.RoleMapper">
+    <sql id="columns">
+        id ,role_name, role_code, description, create_time, update_time, is_deleted
+    </sql>
+
+    <!--新增用户-->
+    <insert id="insert">
+        insert into acl_role (role_name, role_code, description) VALUES (#{roleName},#{roleCode},#{description})
+    </insert>
+
+    <!--修改用户-->
+    <update id="update">
+        update acl_role
+        <set>
+            <if test="roleName != null and roleName != ''">
+                role_name=#{roleName},
+            </if>
+            <if test="roleCode != null and roleCode != ''">
+                role_code=#{roleCode},
+            </if>
+            <if test="description != null and description != ''">
+                description=#{description},
+            </if>
+            update_time=now()
+            where id=#{id} and is_deleted=0
+        </set>
+    </update>
+
+    <!--删除用户-->
+    <update id="delete">
+        update acl_role set is_deleted=1 where id=#{id} and is_deleted=0
+    </update>
+
+    <!--根据ID查找账户-->
+    <select id="findById" resultType="Role">
+        select <include refid="columns"/> from acl_role where id=#{id} and is_deleted=0
+    </select>
+
+    <!--查找所有账户-->
+    <select id="findAll" resultType="Role">
+        select <include refid="columns"/> from acl_role where is_deleted=0
+    </select>
+
+    <!--根据分页查找所有用户-->
+    <select id="findPageList" resultType="Role">
+        select <include refid="columns"/> from acl_role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                role_name like concat("%",#{roleName},"%")
+            </if>
+            and is_deleted=0
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

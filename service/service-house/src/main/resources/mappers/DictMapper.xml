@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.DictMapper">
+    <sql id="columns">
+        id, parent_id, name, dict_code, create_time, update_time, is_deleted
+    </sql>
+
+    <select id="selectByParentId" resultType="Dict">
+        /*前端传输来的数据是hse_dict中的父节点id ,被作为parentId查询父节点下的子节点,因为父节点id=子节点的parentId*/
+        select <include refid="columns"/> from hse_dict where is_deleted=0 and parent_id=#{parentId}
+    </select>
+
+    <!--将hse_dict中的dict_code用作条件查询hse_dict中的父节点id,再用父节点id当作hse_dict中的子节点的parentId来查询所有子节点-->
+    <select id="selectByParentDictCode" resultType="Dict">
+        SELECT  <include refid="columns"/>
+        FROM hse_dict
+        WHERE is_deleted=0 AND parent_id=(SELECT id FROM hse_dict WHERE dict_code=#{parentDictCode} AND is_deleted=0)
+    </select>
+
+</mapper>

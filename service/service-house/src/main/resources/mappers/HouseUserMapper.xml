@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.mapper.HouseUserMapper">
+    <sql id="columns">
+        id, house_id, name, phone, sex, id_no, create_time, update_time, is_deleted
+    </sql>
+    <update id="deleteByHouseId">
+        update hse_house_user set is_deleted=1 where house_id=#{houseId} and is_deleted=0
+    </update>
+
+
+    <select id="findHouseUserByHouseId" resultType="HouseUser">
+        select <include refid="columns"/> from hse_house_user where house_id=#{houseId} and is_deleted=0
+    </select>
+</mapper>
